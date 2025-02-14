@@ -14,6 +14,7 @@ import random
 # 获取窗口
 windows = gw.getWindowsWithTitle('ZhuxianClient')
 space = False
+fishing = False
 if not windows:
     print("窗口未找到")
 else:
@@ -71,13 +72,20 @@ else:
                 interval = random.uniform(0.01, 0.03)
                 time.sleep(interval)
             space = False
-            print("放鱼 ")
+            print("放鱼")
 
         if max_val_diaoyu < threshold and not space:
             res_paogan = cv2.matchTemplate(screenshot, templatepaogan, cv2.TM_CCOEFF_NORMED)
             res_qigan = cv2.matchTemplate(screenshot, template_qigan, cv2.TM_CCOEFF_NORMED)
             min_va_paogan, max_val_paogan, min_loc_paogan, max_loc_paogan = cv2.minMaxLoc(res_paogan)
             min_val_qigan, max_val_qigan, min_loc_qigan, max_loc_qigan = cv2.minMaxLoc(res_qigan)
+
+            if max_val_paogan < threshold and max_val_qigan < threshold and fishing is False:
+                print("换鱼竿")
+                pyautogui.keyDown('0')
+                pyautogui.keyUp('0')
+                pyautogui.sleep(1)
+
             # 抛杆
             if max_val_paogan >= threshold:
 
@@ -87,7 +95,7 @@ else:
                 pyautogui.sleep(interval)
                 # 模拟释放空格键
                 pyautogui.keyUp('space')
-                print("找到抛杆模板，按下空格键")
+                print("找到抛杆模板，自动按下空格键")
                 pyautogui.sleep(3)
 
             # 起杆
@@ -98,5 +106,5 @@ else:
                 pyautogui.sleep(interval)
                 # 模拟释放空格键
                 pyautogui.keyUp('space')
-                print("找到起杆子模板，按下空格键")
-
+                print("找到起杆模板，自动按下空格键")
+                fishing = True
